@@ -64,6 +64,18 @@ const DateFields = memo(function DateFields({ dates, onChange }: DateFieldsProps
   );
 });
 
+// Helper predicates
+const hasAllDateParts = (d: { inDate: string; inTime: string; outDate: string; outTime: string }) =>
+  !!(d.inDate && d.inTime && d.outDate && d.outTime);
+
+function useDateState() {
+  const [dates, setDates] = useState({ inDate: '', inTime: '', outDate: '', outTime: '' });
+  const onFieldChange = useCallback((key: keyof typeof dates, value: string) => {
+    setDates((d) => ({ ...d, [key]: value }));
+  }, []);
+  return { dates, onFieldChange } as const;
+}
+
 const BookingForm = ({ room }: BookingFormProps) => {
   const action = bookRoom as unknown as (
     prevState: BookingFormState,
@@ -72,24 +84,33 @@ const BookingForm = ({ room }: BookingFormProps) => {
   const [state, formAction] = useActionState<BookingFormState, FormData>(action, {});
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-  const [dates, setDates] = useState({ inDate: '', inTime: '', outDate: '', outTime: '' });
+  const { dates, onFieldChange } = useDateState();
   const hours = useBookingCost(dates);
   const { status: availabilityStatus, isRangeValid } = useAvailability(room.$id, dates);
 
-  useEffect(() => {
-    if (state?.error) toast.error(state.error);
-    if (state?.success) {
+  const handleResult = useCallback((s: BookingFormState | undefined) => {
+    if (!s) return;
+    if (s.error) {
+      toast.error(s.error);
+    } else if (s.success) {
       toast.success('Room has been booked!');
       router.push('/bookings');
     }
-  }, [state, router]);
+  }, [router]);
+  useEffect(() => { handleResult(state); }, [state, handleResult]);
 
 
-  const onFieldChange = useCallback((key: keyof typeof dates, value: string) => {
-    setDates((d) => ({ ...d, [key]: value }));
-  }, []);
   const costLabelId = 'estimated-cost-label';
   const liveRegionId = 'booking-live';
+  const handleSubmit = useCallback((formData: FormData) => {
+    if (!isAuthenticated) {
+      toast.info('Please login first.');
+      router.push('/login?redirect=' + encodeURIComponent(`/rooms/${room.$id}`));
+      return;
+    }
+    formAction(formData);
+  }, [formAction, isAuthenticated, router, room.$id]);
+
   return (
     <div className="mt-6" aria-labelledby="booking-form-heading">
       <h2 id="booking-form-heading" className="text-lg font-semibold text-blue-800 dark:text-blue-100 mb-3">Book this Room</h2>
@@ -109,14 +130,7 @@ const BookingForm = ({ room }: BookingFormProps) => {
         </Card>
       )}
       <form
-        action={(formData) => {
-          if (!isAuthenticated) {
-            toast.info('Please login first.');
-            router.push('/login?redirect=' + encodeURIComponent(`/rooms/${room.$id}`));
-            return; // prevent submit
-          }
-          return formAction(formData);
-        }}
+        action={handleSubmit}
         className="space-y-6"
         aria-describedby={costLabelId}
       >
