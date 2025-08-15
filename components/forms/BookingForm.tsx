@@ -8,6 +8,8 @@ import bookRoom from '@/services/bookings/bookRoom';
 import { useAuth } from '@/hooks';
 import { Input, Button, Card } from '@/components';
 import { formatUSD } from '@/utils/currency';
+import checkRoomAvailability from '@/services/rooms/checkRoomAvailability';
+import { STRINGS } from '@/constants/strings';
 
 interface BookingFormState {
   error?: string;
@@ -61,6 +63,64 @@ const DateFields = memo(function DateFields({ dates, onChange }: DateFieldsProps
   );
 });
 
+// Hook: derive calculated hours & cost
+function useBookingCost(dates: { inDate: string; inTime: string; outDate: string; outTime: string }) {
+  const [hours, setHours] = useState<number | null>(null);
+  useEffect(() => {
+    if (dates.inDate && dates.inTime && dates.outDate && dates.outTime) {
+      const start = new Date(`${dates.inDate}T${dates.inTime}`);
+      const end = new Date(`${dates.outDate}T${dates.outTime}`);
+      const diffMs = end.getTime() - start.getTime();
+      if (diffMs > 0) {
+        const raw = diffMs / 36e5;
+        setHours(Math.max(0.5, Math.round(raw * 100) / 100));
+      } else {
+        setHours(null);
+      }
+    } else {
+      setHours(null);
+    }
+  }, [dates]);
+  return hours;
+}
+
+// Hook: availability checking (debounced)
+function useAvailability(roomId: string, dates: { inDate: string; inTime: string; outDate: string; outTime: string }) {
+  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable' | 'error'>('idle');
+  const [isRangeValid, setIsRangeValid] = useState(true);
+  useEffect(() => {
+    if (!(dates.inDate && dates.inTime && dates.outDate && dates.outTime)) {
+      setStatus('idle');
+      return;
+    }
+    const start = new Date(`${dates.inDate}T${dates.inTime}`);
+    const end = new Date(`${dates.outDate}T${dates.outTime}`);
+    const invalid = end.getTime() <= start.getTime();
+    setIsRangeValid(!invalid);
+    if (invalid) {
+      setStatus('idle');
+      return;
+    }
+    let active = true;
+    setStatus('checking');
+    const t = setTimeout(async () => {
+      try {
+        const ok = await checkRoomAvailability(roomId, start.toISOString(), end.toISOString());
+        if (!active) return;
+        setStatus(ok ? 'available' : 'unavailable');
+      } catch {
+        if (!active) return;
+        setStatus('error');
+      }
+    }, 450); // debounce
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
+  }, [roomId, dates]);
+  return { status, isRangeValid } as const;
+}
+
 const BookingForm = ({ room }: BookingFormProps) => {
   const action = bookRoom as unknown as (
     prevState: BookingFormState,
@@ -69,8 +129,9 @@ const BookingForm = ({ room }: BookingFormProps) => {
   const [state, formAction] = useActionState<BookingFormState, FormData>(action, {});
   const { isAuthenticated } = useAuth();
   const router = useRouter();
-  const [calcHours, setCalcHours] = useState<number | null>(null);
   const [dates, setDates] = useState({ inDate: '', inTime: '', outDate: '', outTime: '' });
+  const hours = useBookingCost(dates);
+  const { status: availabilityStatus, isRangeValid } = useAvailability(room.$id, dates);
 
   useEffect(() => {
     if (state?.error) toast.error(state.error);
@@ -80,21 +141,6 @@ const BookingForm = ({ room }: BookingFormProps) => {
     }
   }, [state, router]);
 
-  useEffect(() => {
-    if (dates.inDate && dates.inTime && dates.outDate && dates.outTime) {
-      const start = new Date(`${dates.inDate}T${dates.inTime}`);
-      const end = new Date(`${dates.outDate}T${dates.outTime}`);
-      const diffMs = end.getTime() - start.getTime();
-      if (diffMs > 0) {
-        const hours = diffMs / (1000 * 60 * 60);
-        setCalcHours(Math.max(0.5, Math.round(hours * 100) / 100));
-      } else {
-        setCalcHours(null);
-      }
-    } else {
-      setCalcHours(null);
-    }
-  }, [dates]);
 
   const onFieldChange = useCallback((key: keyof typeof dates, value: string) => {
     setDates((d) => ({ ...d, [key]: value }));
@@ -134,15 +180,38 @@ const BookingForm = ({ room }: BookingFormProps) => {
         <input type="hidden" name="room_id" value={room.$id} />
         <DateFields dates={dates} onChange={onFieldChange} />
 
-        <div
-          className="rounded-md border border-blue-100 bg-white/70 dark:bg-blue-900/40 dark:border-blue-800 px-4 py-3 text-sm flex items-center justify-between"
-          aria-live="polite"
-          aria-atomic="true"
-        >
-          <span id={costLabelId} className="text-blue-700 dark:text-blue-200 font-medium">Estimated Cost</span>
-          <span className="font-semibold text-blue-800 dark:text-blue-100">
-            {calcHours !== null ? `${formatUSD((room as any).price_per_hour * calcHours)} (${calcHours}h)` : '—'}
-          </span>
+        <div className="space-y-3">
+          <div
+            className="rounded-md border border-blue-100 bg-white/70 dark:bg-blue-900/40 dark:border-blue-800 px-4 py-3 text-sm flex items-center justify-between"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span id={costLabelId} className="text-blue-700 dark:text-blue-200 font-medium">{STRINGS.rooms.estimatedCost}</span>
+            <span className="font-semibold text-blue-800 dark:text-blue-100">
+              {hours !== null ? `${formatUSD((room as any).price_per_hour * hours)} (${hours}h)` : '—'}
+            </span>
+          </div>
+          <div
+            className="rounded-md border border-blue-100 bg-white/60 dark:bg-blue-900/30 dark:border-blue-800 px-3 py-2 text-[12px] font-medium flex items-center gap-2"
+            aria-live="polite"
+          >
+            {!isRangeValid && (
+              <span className="text-red-600 dark:text-red-400">{STRINGS.bookings.dateRangeInvalid}</span>
+            )}
+            {isRangeValid && availabilityStatus === 'idle' && <span className="text-blue-600/70">—</span>}
+            {isRangeValid && availabilityStatus === 'checking' && (
+              <span className="text-blue-600 animate-pulse">{STRINGS.bookings.availabilityChecking}</span>
+            )}
+            {isRangeValid && availabilityStatus === 'available' && (
+              <span className="text-green-600 dark:text-green-400">{STRINGS.bookings.availabilityAvailable}</span>
+            )}
+            {isRangeValid && availabilityStatus === 'unavailable' && (
+              <span className="text-red-600 dark:text-red-400">{STRINGS.bookings.availabilityUnavailable}</span>
+            )}
+            {isRangeValid && availabilityStatus === 'error' && (
+              <span className="text-amber-600 dark:text-amber-400">{STRINGS.bookings.availabilityError}</span>
+            )}
+          </div>
         </div>
         <div className="sr-only" id={liveRegionId} aria-live="assertive" aria-atomic="true">
           {state?.error ? `Error: ${state.error}` : state?.success ? 'Booking successful' : ''}

@@ -24,6 +24,12 @@ export const STRINGS = {
     subtitle: 'View and manage all your room bookings',
     noneTitle: 'No bookings yet',
     noneMessage: "You don't have any active bookings. Book a room to get started.",
+    availabilityChecking: 'Checking availability…',
+    availabilityAvailable: 'Room is available for the selected time range',
+    availabilityUnavailable: 'Room is NOT available for the selected time range',
+    availabilityError: 'Could not verify availability right now',
+    dateRangeInvalid: 'End time must be after start time',
+    loginRequiredShort: 'Login required to book',
   },
   rooms: {
     availableRooms: 'Available Rooms',
