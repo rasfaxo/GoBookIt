@@ -93,7 +93,7 @@ const BookingForm = ({ room }: BookingFormProps) => {
     if (s.error) {
       toast.error(s.error);
     } else if (s.success) {
-      toast.success('Room has been booked!');
+  toast.success(STRINGS.bookings.bookSuccess);
       router.push('/bookings');
     }
   }, [router]);

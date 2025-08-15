@@ -1,7 +1,8 @@
 'use client';
 import { toast } from 'react-toastify';
 
-import cancelBooking from '@/services/bookings/cancelBooking';
+import { cancelBookingApi } from '@/services/adapters';
+import { STRINGS } from '@/constants/strings';
 
 interface Props {
   bookingId: string;
@@ -9,13 +10,14 @@ interface Props {
 
 const CancelBookingButton = ({ bookingId }: Props) => {
   const handleCancelClick = async () => {
-    if (!confirm('Are you sure you want to cancel this booking?')) return;
+    if (!confirm(STRINGS.bookings.cancelConfirm)) return;
     try {
-      const result = await cancelBooking(bookingId);
-      if (result.success) toast.success('Booking cancelled successfully!');
+      const result = await cancelBookingApi(bookingId);
+      if (result.ok) toast.success(STRINGS.bookings.cancelSuccess);
+      else toast.error(result.error || STRINGS.bookings.cancelError);
     } catch (error) {
       console.log('Failed to cancel booking', error);
-      toast.error('Failed to cancel booking');
+      toast.error(STRINGS.bookings.cancelError);
     }
   };
   return (
