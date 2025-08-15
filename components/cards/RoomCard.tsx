@@ -16,7 +16,8 @@ interface RoomCardProps {
   };
 }
 
-const RoomCard = ({ room }: RoomCardProps) => {
+import React from 'react';
+const RoomCardBase = ({ room }: RoomCardProps) => {
   const imageSrc = buildAppwriteImageUrl({ fileId: room.image }) || getFallbackImage();
   const unoptimized = shouldBypassNextImageOptimization();
   const price = formatUSD(room.price_per_hour);
@@ -76,4 +77,6 @@ const RoomCard = ({ room }: RoomCardProps) => {
     </article>
   );
 };
+const RoomCard = React.memo(RoomCardBase, (a, b) => a.room.$id === b.room.$id && a.room.price_per_hour === b.room.price_per_hour);
+RoomCard.displayName = 'RoomCard';
 export default RoomCard;

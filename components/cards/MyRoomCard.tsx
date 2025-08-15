@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import React from 'react';
 import { FaEye } from 'react-icons/fa';
 import DeleteRoomButton from '../ui/DeleteRoomButton';
 import { Button } from '@/components';
@@ -7,7 +8,7 @@ interface MyRoomCardProps {
   room: { $id: string; name: string };
 }
 
-const MyRoomCard = ({ room }: MyRoomCardProps) => (
+const MyRoomCardBase = ({ room }: MyRoomCardProps) => (
   <article className="group relative flex flex-col rounded-xl border border-blue-100 bg-white/90 backdrop-blur-sm shadow-sm p-4 transition hover:shadow-md">
     <div className="flex items-start justify-between gap-4">
       <h4 className="text-base font-semibold tracking-tight text-blue-800 line-clamp-1" title={room.name}>
@@ -24,5 +25,6 @@ const MyRoomCard = ({ room }: MyRoomCardProps) => (
     </div>
   </article>
 );
-
+const MyRoomCard = React.memo(MyRoomCardBase, (a,b)=> a.room.$id === b.room.$id && a.room.name === b.room.name);
+MyRoomCard.displayName = 'MyRoomCard';
 export default MyRoomCard;
