@@ -1,4 +1,4 @@
-import { Heading, MyRoomCard } from '@/components';
+import { Heading, MyRoomCard, EmptyState } from '@/components';
 import getMyRooms from '@/services/rooms/getMyRooms';
 
 interface RoomDoc {
@@ -11,11 +11,11 @@ const MyRoomsPage = async () => {
 
   return (
     <>
-      <Heading title="My Rooms" />
+      <Heading title="My Rooms" subtitle="Kelola ruang yang Anda listing untuk disewakan" />
       {rooms.length > 0 ? (
         rooms.map((room) => <MyRoomCard key={room.$id} room={room} />)
       ) : (
-        <p>You have no room listings</p>
+        <EmptyState title="Belum ada ruang" message="Anda belum menambahkan ruang apa pun." />
       )}
     </>
   );

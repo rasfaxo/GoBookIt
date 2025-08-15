@@ -1,6 +1,6 @@
 import type { BookingDoc } from '@/types/bookings';
 
-import { Heading, BookedRoomCard } from '@/components';
+import { Heading, BookedRoomCard, EmptyState } from '@/components';
 import getMyBookings from '@/services/bookings/getMyBookings';
 
 const BookingsPage = async () => {
@@ -8,9 +8,9 @@ const BookingsPage = async () => {
 
   return (
     <>
-      <Heading title="My Bookings" />
+      <Heading title="My Bookings" subtitle="Lihat dan kelola semua pemesanan ruang Anda" />
       {bookings.length === 0 ? (
-        <p className="text-gray-600 mt-4">You have no bookings</p>
+        <EmptyState title="Tidak ada booking" message="Anda belum memiliki booking aktif. Pesan ruang untuk mulai menggunakannya." />
       ) : (
         bookings.map((booking) => <BookedRoomCard key={booking.$id} booking={booking} />)
       )}

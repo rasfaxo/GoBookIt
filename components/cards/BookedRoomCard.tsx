@@ -27,11 +27,32 @@ const formatDate = (dateString: string) => {
 };
 const BookedRoomCard = ({ booking }: BookedRoomCardProps) => {
   const rawRoom = booking.room_id;
-  const room = typeof rawRoom === 'string' ? { $id: rawRoom, name: 'Room' } : rawRoom;
+
+  // Safely extract an ID string from multiple possible shapes that may appear
+  const extractId = (val: unknown): string | undefined => {
+    if (!val) return undefined;
+    if (typeof val === 'string') return val;
+    if (typeof val === 'object') {
+      const obj: any = val as any;
+      // common fields
+      if (typeof obj.$id === 'string') return obj.$id;
+      if (typeof obj.id === 'string') return obj.id;
+      // sometimes the id may be nested inside another object
+      if (obj.$id && typeof obj.$id === 'object') {
+        if (typeof obj.$id.$id === 'string') return obj.$id.$id;
+        if (typeof obj.$id.id === 'string') return obj.$id.id;
+      }
+    }
+    return undefined;
+  };
+
+  const roomId = extractId(rawRoom);
+  const roomName = typeof rawRoom === 'object' && rawRoom ? (rawRoom as any).name || 'Room' : 'Room';
+
   return (
     <div className="bg-white shadow rounded-lg p-4 mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">
       <div>
-        <h4 className="text-lg font-semibold">{room.name}</h4>
+  <h4 className="text-lg font-semibold">{roomName}</h4>
         <p className="text-sm text-gray-600">
           <strong>Check In:</strong> {formatDate(booking.check_in)}
         </p>
@@ -40,12 +61,22 @@ const BookedRoomCard = ({ booking }: BookedRoomCardProps) => {
         </p>
       </div>
       <div className="flex flex-col sm:flex-row w-full sm:w-auto sm:space-x-2 mt-2 sm:mt-0">
-        <Link
-          href={`/rooms/${room.$id}`}
-          className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 w-full sm:w-auto text-center hover:bg-blue-700"
-        >
-          View Room
-        </Link>
+    {typeof roomId === 'string' ? (
+          <Link
+      href={`/rooms/${roomId}`}
+            className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 w-full sm:w-auto text-center hover:bg-blue-700"
+          >
+            View Room
+          </Link>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="bg-gray-300 text-gray-700 px-4 py-2 rounded mb-2 sm:mb-0 w-full sm:w-auto text-center"
+          >
+            View Room
+          </button>
+        )}
         <CancelBookingButton bookingId={booking.$id} />
       </div>
     </div>
