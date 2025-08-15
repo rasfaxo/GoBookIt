@@ -66,7 +66,17 @@ export const createSessionClient = (token?: string) => {
   const project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
   if (!endpoint || !project) throw new Error('Missing Appwrite env configuration');
   const client = new Client().setEndpoint(endpoint).setProject(project);
-  if (token) client.setJWT(token);
+  if (token) {
+    try {
+      // Safe debug log: show token length and whether it looks like a JWT (has two dots)
+      const len = token.length;
+      const dotCount = (token.match(/\./g) || []).length;
+      console.log(`createSessionClient: received token length=${len}, dotCount=${dotCount}`);
+    } catch (e) {
+      // ignore logging errors
+    }
+    client.setJWT(token);
+  }
   return {
     client,
     get account() {
@@ -77,7 +87,6 @@ export const createSessionClient = (token?: string) => {
     },
   };
 };
-
 
 //Create a session client using a secret token (for server-side operations).
 //This is used for operations that require an authenticated session.

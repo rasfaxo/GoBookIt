@@ -29,8 +29,8 @@ export default async function deleteRoom(roomId: string): Promise<ActionResult> 
       process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS!,
       roomToDelete.$id
     );
-    revalidatePath('/rooms/my', 'layout');
-    revalidatePath('/', 'layout');
+    revalidatePath('/rooms/my');
+    revalidatePath('/');
     return { success: true };
   } catch (error) {
     console.log('Failed to delete room', error);

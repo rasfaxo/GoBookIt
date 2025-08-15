@@ -3,22 +3,30 @@ import { FaTrash } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 
 import deleteRoom from '@/services/rooms/deleteRoom';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   roomId: string;
 }
 
 const DeleteRoomButton = ({ roomId }: Props) => {
+  const router = useRouter();
+
   const handleDelete = async () => {
     const confirmed = window.confirm('Are you sure you want to delete this room?');
     if (!confirmed) return;
-    try {
-      await deleteRoom(roomId);
-      toast.success('Room deleted successfully!');
-    } catch (error) {
-      console.log('Failed to delete room', error);
-      toast.error('Failed to delete room');
-    }
+      try {
+        const result = await deleteRoom(roomId);
+        if (result && (result as any).error) {
+          toast.error((result as any).error || 'Failed to delete room');
+          return;
+        }
+        toast.success('Room deleted successfully!');
+        router.refresh();
+      } catch (error) {
+        console.log('Failed to delete room', error);
+        toast.error('Failed to delete room');
+      }
   };
   return (
     <button
