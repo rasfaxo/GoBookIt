@@ -3,6 +3,7 @@ import Link from 'next/link';
 import CancelBookingButton from '../ui/CancelBookingButton';
 
 import type { BookingDoc } from '@/types/bookings';
+import React from 'react';
 
 // Allow room_id to be either a string id or a populated minimal room object
 type BookingRoomRef = string | { $id: string; name: string };
@@ -25,7 +26,7 @@ const formatDate = (dateString: string) => {
   });
   return `${month} ${day} at ${time}`;
 };
-const BookedRoomCard = ({ booking }: BookedRoomCardProps) => {
+const BookedRoomCardBase = ({ booking }: BookedRoomCardProps) => {
   const rawRoom = booking.room_id;
 
   // Safely extract an ID string from multiple possible shapes that may appear
@@ -82,4 +83,6 @@ const BookedRoomCard = ({ booking }: BookedRoomCardProps) => {
     </div>
   );
 };
+const BookedRoomCard = React.memo(BookedRoomCardBase, (a,b)=> a.booking.$id === b.booking.$id && a.booking.check_in === b.booking.check_in && a.booking.check_out === b.booking.check_out);
+BookedRoomCard.displayName = 'BookedRoomCard';
 export default BookedRoomCard;
