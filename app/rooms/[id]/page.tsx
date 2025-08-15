@@ -1,10 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaChevronLeft } from 'react-icons/fa';
 import dynamic from 'next/dynamic';
-const FaChevronLeft = dynamic(() => import('react-icons/fa').then(m => m.FaChevronLeft), { ssr: false });
-
-import { Heading, Card } from '@/components';
-const BookingForm = dynamic(() => import('@/components/forms/BookingForm'));
+import { Heading, Card, BookingForm } from '@/components';
 import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization } from '@/utils';
 import { formatUSD } from '@/utils/currency';
 import getSingleRoom from '@/services/rooms/getSingleRoom';
