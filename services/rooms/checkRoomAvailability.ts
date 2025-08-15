@@ -6,17 +6,13 @@ import { Query } from 'node-appwrite';
 
 import { createSessionClient } from '@/lib/appwrite';
 
-function toUTCDateTime(dateString: string) {
-  return DateTime.fromISO(dateString, { zone: 'utc' }).toUTC();
+function toUTCDateTime(iso: string): DateTime {
+  return DateTime.fromISO(iso, { setZone: true }).toUTC();
 }
 
-function dateRangesOverlap(
-  aStart: InstanceType<typeof DateTime>,
-  aEnd: InstanceType<typeof DateTime>,
-  bStart: InstanceType<typeof DateTime>,
-  bEnd: InstanceType<typeof DateTime>
-) {
-  return aStart < bEnd && aEnd > bStart;
+function intervalsOverlap(aStart: DateTime, aEnd: DateTime, bStart: DateTime, bEnd: DateTime) {
+  if (!aStart.isValid || !aEnd.isValid || !bStart.isValid || !bEnd.isValid) return false;
+  return aStart < bEnd && bStart < aEnd; // half-open check
 }
 
 export default async function checkRoomAvailability(
@@ -30,6 +26,7 @@ export default async function checkRoomAvailability(
     const { databases } = await createSessionClient(sessionCookie.value);
     const checkInDt = toUTCDateTime(checkIn);
     const checkOutDt = toUTCDateTime(checkOut);
+    if (!checkInDt.isValid || !checkOutDt.isValid || checkOutDt <= checkInDt) return false;
     const { documents: bookings } = await databases.listDocuments(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE!,
       process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_BOOKINGS!,
@@ -38,7 +35,7 @@ export default async function checkRoomAvailability(
     for (const booking of bookings) {
       const bStart = toUTCDateTime(booking.check_in);
       const bEnd = toUTCDateTime(booking.check_out);
-      if (dateRangesOverlap(checkInDt, checkOutDt, bStart, bEnd)) return false;
+      if (intervalsOverlap(checkInDt, checkOutDt, bStart, bEnd)) return false;
     }
     return true;
   } catch (error) {

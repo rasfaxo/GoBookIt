@@ -10,6 +10,7 @@ import { Input, Button, Card } from '@/components';
 import { formatUSD } from '@/utils/currency';
 import checkRoomAvailability from '@/services/rooms/checkRoomAvailability';
 import { STRINGS } from '@/constants/strings';
+import { AvailabilityBanner } from '@/components';
 
 interface BookingFormState {
   error?: string;
@@ -191,27 +192,7 @@ const BookingForm = ({ room }: BookingFormProps) => {
               {hours !== null ? `${formatUSD((room as any).price_per_hour * hours)} (${hours}h)` : '—'}
             </span>
           </div>
-          <div
-            className="rounded-md border border-blue-100 bg-white/60 dark:bg-blue-900/30 dark:border-blue-800 px-3 py-2 text-[12px] font-medium flex items-center gap-2"
-            aria-live="polite"
-          >
-            {!isRangeValid && (
-              <span className="text-red-600 dark:text-red-400">{STRINGS.bookings.dateRangeInvalid}</span>
-            )}
-            {isRangeValid && availabilityStatus === 'idle' && <span className="text-blue-600/70">—</span>}
-            {isRangeValid && availabilityStatus === 'checking' && (
-              <span className="text-blue-600 animate-pulse">{STRINGS.bookings.availabilityChecking}</span>
-            )}
-            {isRangeValid && availabilityStatus === 'available' && (
-              <span className="text-green-600 dark:text-green-400">{STRINGS.bookings.availabilityAvailable}</span>
-            )}
-            {isRangeValid && availabilityStatus === 'unavailable' && (
-              <span className="text-red-600 dark:text-red-400">{STRINGS.bookings.availabilityUnavailable}</span>
-            )}
-            {isRangeValid && availabilityStatus === 'error' && (
-              <span className="text-amber-600 dark:text-amber-400">{STRINGS.bookings.availabilityError}</span>
-            )}
-          </div>
+          <AvailabilityBanner status={availabilityStatus} isRangeValid={isRangeValid} />
         </div>
         <div className="sr-only" id={liveRegionId} aria-live="assertive" aria-atomic="true">
           {state?.error ? `Error: ${state.error}` : state?.success ? 'Booking successful' : ''}
