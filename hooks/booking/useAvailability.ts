@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import checkRoomAvailability from '@/services/rooms/checkRoomAvailability';
+import { hasAllParts, buildRange, validateRange } from '@/utils/booking/availabilityHelpers';
 
 export type AvailabilityStatus = 'idle' | 'checking' | 'available' | 'unavailable' | 'error';
 
@@ -13,23 +14,22 @@ export interface BookingDates {
 export function useAvailability(roomId: string, dates: BookingDates) {
   const [status, setStatus] = useState<AvailabilityStatus>('idle');
   const [isRangeValid, setIsRangeValid] = useState(true);
+
   useEffect(() => {
-    const { inDate, inTime, outDate, outTime } = dates;
-    if (!(inDate && inTime && outDate && outTime)) {
+    if (!hasAllParts(dates)) {
       setStatus('idle');
-      return;
+      return; // incomplete
     }
-    const start = new Date(`${inDate}T${inTime}`);
-    const end = new Date(`${outDate}T${outTime}`);
-    const invalid = end.getTime() <= start.getTime();
-    setIsRangeValid(!invalid);
-    if (invalid) {
+    const { start, end } = buildRange(dates);
+    const { valid } = validateRange(start, end);
+    setIsRangeValid(valid);
+    if (!valid) {
       setStatus('idle');
-      return;
+      return; // invalid ordering
     }
     let active = true;
     setStatus('checking');
-    const t = setTimeout(async () => {
+    const timer = setTimeout(async () => {
       try {
         const ok = await checkRoomAvailability(roomId, start.toISOString(), end.toISOString());
         if (!active) return;
@@ -41,8 +41,9 @@ export function useAvailability(roomId: string, dates: BookingDates) {
     }, 300);
     return () => {
       active = false;
-      clearTimeout(t);
+      clearTimeout(timer);
     };
   }, [roomId, dates]);
+
   return { status, isRangeValid } as const;
 }
