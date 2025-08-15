@@ -8,9 +8,9 @@ import bookRoom from '@/services/bookings/bookRoom';
 import { useAuth } from '@/hooks';
 import { Input, Button, Card } from '@/components';
 import { formatUSD } from '@/utils/currency';
-import checkRoomAvailability from '@/services/rooms/checkRoomAvailability';
 import { STRINGS } from '@/constants/strings';
 import { AvailabilityBanner } from '@/components';
+import { useAvailability, useBookingCost } from '@/hooks/booking';
 
 interface BookingFormState {
   error?: string;
@@ -63,64 +63,6 @@ const DateFields = memo(function DateFields({ dates, onChange }: DateFieldsProps
     </div>
   );
 });
-
-// Hook: derive calculated hours & cost
-function useBookingCost(dates: { inDate: string; inTime: string; outDate: string; outTime: string }) {
-  const [hours, setHours] = useState<number | null>(null);
-  useEffect(() => {
-    if (dates.inDate && dates.inTime && dates.outDate && dates.outTime) {
-      const start = new Date(`${dates.inDate}T${dates.inTime}`);
-      const end = new Date(`${dates.outDate}T${dates.outTime}`);
-      const diffMs = end.getTime() - start.getTime();
-      if (diffMs > 0) {
-        const raw = diffMs / 36e5;
-        setHours(Math.max(0.5, Math.round(raw * 100) / 100));
-      } else {
-        setHours(null);
-      }
-    } else {
-      setHours(null);
-    }
-  }, [dates]);
-  return hours;
-}
-
-// Hook: availability checking (debounced)
-function useAvailability(roomId: string, dates: { inDate: string; inTime: string; outDate: string; outTime: string }) {
-  const [status, setStatus] = useState<'idle' | 'checking' | 'available' | 'unavailable' | 'error'>('idle');
-  const [isRangeValid, setIsRangeValid] = useState(true);
-  useEffect(() => {
-    if (!(dates.inDate && dates.inTime && dates.outDate && dates.outTime)) {
-      setStatus('idle');
-      return;
-    }
-    const start = new Date(`${dates.inDate}T${dates.inTime}`);
-    const end = new Date(`${dates.outDate}T${dates.outTime}`);
-    const invalid = end.getTime() <= start.getTime();
-    setIsRangeValid(!invalid);
-    if (invalid) {
-      setStatus('idle');
-      return;
-    }
-    let active = true;
-    setStatus('checking');
-    const t = setTimeout(async () => {
-      try {
-        const ok = await checkRoomAvailability(roomId, start.toISOString(), end.toISOString());
-        if (!active) return;
-        setStatus(ok ? 'available' : 'unavailable');
-      } catch {
-        if (!active) return;
-        setStatus('error');
-      }
-    }, 450); // debounce
-    return () => {
-      active = false;
-      clearTimeout(t);
-    };
-  }, [roomId, dates]);
-  return { status, isRangeValid } as const;
-}
 
 const BookingForm = ({ room }: BookingFormProps) => {
   const action = bookRoom as unknown as (
