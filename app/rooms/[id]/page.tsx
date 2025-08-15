@@ -9,10 +9,11 @@ import getSingleRoom from '@/services/rooms/getSingleRoom';
 import type { RoomDoc } from '@/types/rooms';
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }> | { id: string };
 }
 
-export default async function RoomPage({ params }: PageProps) {
+export default async function RoomPage(props: PageProps) {
+  const params = await props.params; 
   const room: RoomDoc = await getSingleRoom(params.id);
   const imageSrc =
     buildAppwriteImageUrl({ fileId: room.image }) || getFallbackImage();
@@ -43,6 +44,8 @@ export default async function RoomPage({ params }: PageProps) {
                 className="object-cover"
                 unoptimized={unoptimized}
                 priority
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMzIwJyBoZWlnaHQ9JDE4MCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48cmVjdCBmaWxsPSIjZWVlIiB3aWR0aD0iMzIwIiBoZWlnaHQ9IjE4MCIvPjwvc3ZnPg=="
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">

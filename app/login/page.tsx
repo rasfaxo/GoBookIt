@@ -6,6 +6,8 @@ import { useActionState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useAuth } from '@/lib/context/authContext';
+import { Input, Button, Card } from '@/components';
+import { STRINGS } from '@/constants/strings';
 import createSession from '@/services/auth/createSession';
 
 interface ActionState {
@@ -41,7 +43,7 @@ const LoginPage = () => {
           Welcome Back
         </div>
         <form action={formAction} className="space-y-6" noValidate>
-          <h1 className="text-3xl font-extrabold text-center text-blue-700 tracking-tight">Login</h1>
+          <h1 className="text-3xl font-extrabold text-center text-blue-700 tracking-tight">{STRINGS.auth.loginTitle}</h1>
           <p className="text-center text-sm text-blue-500">Sign in to manage your bookings and rooms</p>
 
           {state?.error && (
@@ -55,54 +57,44 @@ const LoginPage = () => {
             </div>
           )}
 
-          <div className="space-y-1">
-            <label htmlFor="email" className="block text-sm font-semibold text-blue-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="border border-blue-300 rounded-lg w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-blue-300 shadow-sm"
-              autoComplete="email"
-              required
-              placeholder="you@mail.com"
-            />
-          </div>
+          <Input
+            type="email"
+            name="email"
+            label={STRINGS.auth.email}
+            autoComplete="email"
+            required
+            placeholder="you@mail.com"
+          />
 
           <div className="space-y-1">
             <label htmlFor="password" className="block text-sm font-semibold text-blue-700">
-              Password
+              {STRINGS.auth.password}
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 name="password"
-                className="border border-blue-300 rounded-lg w-full py-2 px-3 pr-11 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-blue-300 shadow-sm"
                 autoComplete="current-password"
                 required
                 placeholder="••••••••"
+                className="pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((p) => !p)}
                 className="absolute inset-y-0 right-2 flex items-center text-xs text-blue-600 hover:text-blue-700"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? STRINGS.auth.hide + ' password' : STRINGS.auth.show + ' password'}
               >
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? STRINGS.auth.hide : STRINGS.auth.show}
               </button>
             </div>
           </div>
 
           <div className="space-y-4">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-lg w-full shadow hover:bg-blue-700 transition-colors"
-            >
-              {isSubmitting ? 'Processing…' : 'Login'}
-            </button>
+            <Button type="submit" disabled={isSubmitting} variant="primary" className="w-full">
+              {isSubmitting ? 'Processing…' : STRINGS.auth.loginTitle}
+            </Button>
             <button
               type="button"
               className="bg-white text-blue-600 border border-blue-500 font-medium py-2.5 px-4 rounded-lg w-full shadow-sm hover:bg-blue-50 transition-colors"
@@ -124,9 +116,9 @@ const LoginPage = () => {
               Login with Google
             </button>
             <div className="text-center text-sm text-blue-600">
-              <span className="mr-1">Don't have an account?</span>
+              <span className="mr-1">{STRINGS.auth.dontHaveAccount}</span>
               <Link href="/register" className="font-semibold underline-offset-2 hover:underline">
-                Sign Up
+                {STRINGS.auth.signUp}
               </Link>
             </div>
           </div>

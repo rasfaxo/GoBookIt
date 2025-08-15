@@ -6,6 +6,8 @@ import { useActionState } from 'react';
 import { toast } from 'react-toastify';
 
 import createUser from '@/services/auth/createUser';
+import { Input, Button } from '@/components';
+import { STRINGS } from '@/constants/strings';
 
 interface RegisterState {
   error?: string;
@@ -53,7 +55,7 @@ const RegisterPage = () => {
           className="space-y-6"
           noValidate
         >
-          <h1 className="text-3xl font-extrabold text-center text-blue-700 tracking-tight">Register</h1>
+          <h1 className="text-3xl font-extrabold text-center text-blue-700 tracking-tight">{STRINGS.auth.registerTitle}</h1>
           <p className="text-center text-sm text-blue-500">Sign up to start booking and managing rooms</p>
 
           {clientError && (
@@ -72,91 +74,61 @@ const RegisterPage = () => {
             </div>
           )}
 
-          <div className="space-y-1">
-            <label htmlFor="name" className="block text-sm font-semibold text-blue-700">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              className="border border-blue-300 rounded-lg w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-blue-300 shadow-sm"
-              autoComplete="name"
-              required
-              placeholder="Full name"
-            />
-          </div>
-          <div className="space-y-1">
-            <label htmlFor="email" className="block text-sm font-semibold text-blue-700">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              className="border border-blue-300 rounded-lg w-full py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-blue-300 shadow-sm"
-              autoComplete="email"
-              required
-              placeholder="you@mail.com"
-            />
-          </div>
+          <Input type="text" id="name" name="name" label="Name" autoComplete="name" required placeholder="Full name" />
+          <Input type="email" id="email" name="email" label={STRINGS.auth.email} autoComplete="email" required placeholder="you@mail.com" />
           <div className="space-y-1">
             <label htmlFor="password" className="block text-sm font-semibold text-blue-700">
-              Password
+              {STRINGS.auth.password}
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 name="password"
-                className="border border-blue-300 rounded-lg w-full py-2 px-3 pr-11 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-blue-300 shadow-sm"
-                required
                 autoComplete="new-password"
+                required
                 placeholder="••••••••"
+                className="pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((p) => !p)}
                 className="absolute inset-y-0 right-2 flex items-center text-xs text-blue-600 hover:text-blue-700"
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-label={showPassword ? STRINGS.auth.hide + ' password' : STRINGS.auth.show + ' password'}
               >
-                {showPassword ? 'Hide' : 'Show'}
+                {showPassword ? STRINGS.auth.hide : STRINGS.auth.show}
               </button>
             </div>
           </div>
           <div className="space-y-1">
             <label htmlFor="confirm-password" className="block text-sm font-semibold text-blue-700">
-              Confirm Password
+              {STRINGS.auth.confirmPassword}
             </label>
             <div className="relative">
-              <input
+              <Input
                 type={showConfirm ? 'text' : 'password'}
                 id="confirm-password"
                 name="confirm-password"
-                className="border border-blue-300 rounded-lg w-full py-2 px-3 pr-11 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-blue-300 shadow-sm"
                 autoComplete="new-password"
                 required
                 placeholder="••••••••"
+                className="pr-11"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirm((p) => !p)}
                 className="absolute inset-y-0 right-2 flex items-center text-xs text-blue-600 hover:text-blue-700"
-                aria-label={showConfirm ? 'Hide confirm password' : 'Show confirm password'}
+                aria-label={showConfirm ? STRINGS.auth.hide + ' confirm password' : STRINGS.auth.show + ' confirm password'}
               >
-                {showConfirm ? 'Hide' : 'Show'}
+                {showConfirm ? STRINGS.auth.hide : STRINGS.auth.show}
               </button>
             </div>
           </div>
 
           <div className="space-y-4">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-2.5 px-4 rounded-lg w-full shadow hover:bg-blue-700 transition-colors"
-            >
-              {isSubmitting ? 'Processing…' : 'Register'}
-            </button>
+            <Button type="submit" disabled={isSubmitting} variant="primary" className="w-full">
+              {isSubmitting ? 'Processing…' : STRINGS.auth.registerTitle}
+            </Button>
             <div className="text-center text-sm text-blue-600">
               <span className="mr-1">Already have an account?</span>
               <Link href="/login" className="font-semibold underline-offset-2 hover:underline">
