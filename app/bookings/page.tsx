@@ -8,9 +8,9 @@ const BookingsPage = async () => {
 
   return (
     <>
-      <Heading title="My Bookings" subtitle="Lihat dan kelola semua pemesanan ruang Anda" />
+  <Heading title="My Bookings" subtitle="View and manage all your room bookings" />
       {bookings.length === 0 ? (
-        <EmptyState title="Tidak ada booking" message="Anda belum memiliki booking aktif. Pesan ruang untuk mulai menggunakannya." />
+  <EmptyState title="No bookings yet" message="You don't have any active bookings. Book a room to get started." />
       ) : (
         bookings.map((booking) => <BookedRoomCard key={booking.$id} booking={booking} />)
       )}

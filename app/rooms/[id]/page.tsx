@@ -4,7 +4,7 @@ import { FaChevronLeft } from 'react-icons/fa';
 
 import { Heading, BookingForm, Card } from '@/components';
 import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization } from '@/utils';
-import { formatIDR } from '@/utils/currency';
+import { formatUSD } from '@/utils/currency';
 import getSingleRoom from '@/services/rooms/getSingleRoom';
 import type { RoomDoc } from '@/types/rooms';
 
@@ -56,7 +56,7 @@ export default async function RoomPage({ params }: PageProps) {
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
                 <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Price / Hour</p>
-                <p className="text-sm font-bold text-blue-700">{formatIDR(room.price_per_hour)}</p>
+                <p className="text-sm font-bold text-blue-700">{formatUSD(room.price_per_hour)}</p>
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
                 <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Address</p>
@@ -68,7 +68,7 @@ export default async function RoomPage({ params }: PageProps) {
             <div className="sticky top-6">
               <div className="mb-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-lg px-5 py-4 shadow">
                 <p className="text-xs uppercase tracking-wide font-semibold">Starting from</p>
-                <p className="text-2xl font-extrabold mt-1">{formatIDR(room.price_per_hour)}/hour</p>
+                <p className="text-2xl font-extrabold mt-1">{formatUSD(room.price_per_hour)}/hour</p>
               </div>
               <BookingForm room={room} />
             </div>

@@ -16,7 +16,7 @@ const MyRoomCard = ({ room }: MyRoomCardProps) => (
       <div className="flex items-center gap-2">
         <Button asChild size="sm" variant="secondary" className="font-medium">
           <Link href={`/rooms/${room.$id}`} aria-label={`View ${room.name}`}>
-            <FaEye className="mr-1 inline" /> Lihat
+            <FaEye className="mr-1 inline" /> View
           </Link>
         </Button>
         <DeleteRoomButton roomId={room.$id} />
