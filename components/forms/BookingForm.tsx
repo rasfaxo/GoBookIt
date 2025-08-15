@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, memo } from 'react';
 import { useActionState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -16,6 +16,50 @@ interface BookingFormState {
 interface BookingFormProps {
   room: { $id: string };
 }
+
+// Subcomponent: cluster of date/time inputs
+interface DateFieldsProps {
+  dates: { inDate: string; inTime: string; outDate: string; outTime: string };
+  onChange: (key: keyof DateFieldsProps['dates'], value: string) => void;
+}
+const DateFields = memo(function DateFields({ dates, onChange }: DateFieldsProps) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5" aria-labelledby="booking-dates-heading">
+      <Input
+        type="date"
+        name="check_in_date"
+        label="Check-In Date"
+        required
+        onChange={(e) => onChange('inDate', e.target.value)}
+        value={dates.inDate}
+      />
+      <Input
+        type="time"
+        name="check_in_time"
+        label="Check-In Time"
+        required
+        onChange={(e) => onChange('inTime', e.target.value)}
+        value={dates.inTime}
+      />
+      <Input
+        type="date"
+        name="check_out_date"
+        label="Check-Out Date"
+        required
+        onChange={(e) => onChange('outDate', e.target.value)}
+        value={dates.outDate}
+      />
+      <Input
+        type="time"
+        name="check_out_time"
+        label="Check-Out Time"
+        required
+        onChange={(e) => onChange('outTime', e.target.value)}
+        value={dates.outTime}
+      />
+    </div>
+  );
+});
 
 const BookingForm = ({ room }: BookingFormProps) => {
   const action = bookRoom as unknown as (
@@ -55,9 +99,11 @@ const BookingForm = ({ room }: BookingFormProps) => {
   const onFieldChange = useCallback((key: keyof typeof dates, value: string) => {
     setDates((d) => ({ ...d, [key]: value }));
   }, []);
+  const costLabelId = 'estimated-cost-label';
+  const liveRegionId = 'booking-live';
   return (
-    <div className="mt-6">
-      <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-100 mb-3">Book this Room</h2>
+    <div className="mt-6" aria-labelledby="booking-form-heading">
+      <h2 id="booking-form-heading" className="text-lg font-semibold text-blue-800 dark:text-blue-100 mb-3">Book this Room</h2>
       {!isAuthenticated && (
         <Card className="p-4 mb-4 border-amber-300 bg-amber-50/80 dark:bg-amber-900/30 dark:border-amber-600">
           <p className="text-sm text-amber-800 dark:text-amber-200 font-medium">
@@ -83,22 +129,25 @@ const BookingForm = ({ room }: BookingFormProps) => {
           return formAction(formData);
         }}
         className="space-y-6"
+        aria-describedby={costLabelId}
       >
         <input type="hidden" name="room_id" value={room.$id} />
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Input type="date" name="check_in_date" label="Check-In Date" required onChange={(e)=> onFieldChange('inDate', e.target.value)} />
-          <Input type="time" name="check_in_time" label="Check-In Time" required onChange={(e)=> onFieldChange('inTime', e.target.value)} />
-          <Input type="date" name="check_out_date" label="Check-Out Date" required onChange={(e)=> onFieldChange('outDate', e.target.value)} />
-          <Input type="time" name="check_out_time" label="Check-Out Time" required onChange={(e)=> onFieldChange('outTime', e.target.value)} />
-        </div>
+        <DateFields dates={dates} onChange={onFieldChange} />
 
-        <div className="rounded-md border border-blue-100 bg-white/70 dark:bg-blue-900/40 dark:border-blue-800 px-4 py-3 text-sm flex items-center justify-between">
-          <span className="text-blue-700 dark:text-blue-200 font-medium">Estimated Cost</span>
+        <div
+          className="rounded-md border border-blue-100 bg-white/70 dark:bg-blue-900/40 dark:border-blue-800 px-4 py-3 text-sm flex items-center justify-between"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          <span id={costLabelId} className="text-blue-700 dark:text-blue-200 font-medium">Estimated Cost</span>
           <span className="font-semibold text-blue-800 dark:text-blue-100">
             {calcHours !== null ? `${formatUSD((room as any).price_per_hour * calcHours)} (${calcHours}h)` : '—'}
           </span>
         </div>
-        <Button type="submit" variant="primary" className="w-full font-semibold" disabled={!isAuthenticated}>
+        <div className="sr-only" id={liveRegionId} aria-live="assertive" aria-atomic="true">
+          {state?.error ? `Error: ${state.error}` : state?.success ? 'Booking successful' : ''}
+        </div>
+        <Button type="submit" variant="primary" className="w-full font-semibold" disabled={!isAuthenticated} aria-disabled={!isAuthenticated}>
           Book Room
         </Button>
       </form>

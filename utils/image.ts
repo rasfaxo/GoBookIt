@@ -46,3 +46,11 @@ export function shouldBypassNextImageOptimization(): boolean {
   const v = process.env.NEXT_PUBLIC_BYPASS_IMAGE_OPT;
   return !!v && v !== '0';
 }
+
+// A tiny (1x1 or very small) base64 encoded SVG used as a lightweight blur placeholder.
+export const TINY_BLUR_PLACEHOLDER =
+  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iMzAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjMwIiByeD0iNCIgZmlsbD0iI2UwZTVmNyIvPjwvc3ZnPg==';
+
+export function getBlurDataURL(custom?: string): string {
+  return custom || TINY_BLUR_PLACEHOLDER;
+}

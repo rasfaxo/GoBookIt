@@ -21,8 +21,9 @@ const Header = (): JSX.Element => {
     }
   };
   return (
-    <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/80 border-b border-blue-100">
-      <nav className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/80 border-b border-blue-100" role="banner">
+      <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-50 bg-blue-600 text-white text-sm font-medium px-3 py-2 rounded">Skip to content</a>
+      <nav className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8" aria-label="Primary">
         <Link
           href="/"
           className="text-lg font-extrabold tracking-tight text-blue-700 hover:text-blue-800 flex items-center gap-2"
@@ -30,10 +31,10 @@ const Header = (): JSX.Element => {
           <span className="inline-block w-2 h-5 bg-gradient-to-b from-blue-500 to-blue-300 rounded" />
           GoBookIt
         </Link>
-        <div className="hidden md:flex items-center gap-1 text-sm font-medium text-blue-700">
+    <div className="hidden md:flex items-center gap-1 text-sm font-medium text-blue-700" role="menubar">
           <Link
             href="/"
-            className="px-3 py-2 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className="px-3 py-2 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             Rooms
           </Link>
@@ -82,6 +83,7 @@ const Header = (): JSX.Element => {
               <button
                 onClick={handleLogout}
                 className="text-sm font-semibold text-blue-700 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50"
+                aria-label="Sign out"
               >
                 <FaSignOutAlt className="mr-1 inline" /> Sign Out
               </button>

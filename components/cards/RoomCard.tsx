@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization } from '@/utils';
+import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization, getBlurDataURL } from '@/utils';
 import { formatUSD } from '@/utils/currency';
 import { Button } from '@/components';
 
@@ -23,7 +23,7 @@ const RoomCardBase = ({ room }: RoomCardProps) => {
   const price = formatUSD(room.price_per_hour);
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-xl border border-blue-100 bg-white/90 backdrop-blur-sm shadow-sm transition hover:shadow-md focus-within:ring-2 focus-within:ring-blue-400">
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-blue-50">
+    <div className="relative aspect-[4/3] w-full overflow-hidden bg-blue-50">
         <Image
           src={imageSrc}
           alt={room.name}
@@ -32,6 +32,8 @@ const RoomCardBase = ({ room }: RoomCardProps) => {
           className="object-cover transition-transform duration-300 group-hover:scale-105"
           unoptimized={unoptimized}
           loading="lazy"
+      placeholder="blur"
+      blurDataURL={getBlurDataURL()}
         />
         <div className="absolute top-2 left-2 rounded-md bg-white/80 px-2 py-1 text-[11px] font-medium text-blue-700 shadow">
           {price}/hour
