@@ -11,11 +11,11 @@ const MyRoomsPage = async () => {
 
   return (
     <>
-      <Heading title="My Rooms" subtitle="Kelola ruang yang Anda listing untuk disewakan" />
+  <Heading title="My Rooms" subtitle="Manage the rooms you have listed for booking" />
       {rooms.length > 0 ? (
         rooms.map((room) => <MyRoomCard key={room.$id} room={room} />)
       ) : (
-        <EmptyState title="Belum ada ruang" message="Anda belum menambahkan ruang apa pun." />
+  <EmptyState title="No rooms yet" message="You have not added any rooms." />
       )}
     </>
   );

@@ -22,13 +22,13 @@ export default async function RoomPage({ params }: PageProps) {
     <>
       <Heading
         title={room.name}
-        subtitle={room.description || 'Detail ruang dan formulir pemesanan'}
+  subtitle={room.description || 'Room details and booking form'}
         rightSlot={
           <Link
             href="/"
             className="inline-flex items-center text-sm font-medium text-blue-600 hover:underline"
           >
-            <FaChevronLeft className="mr-1" /> Kembali
+            <FaChevronLeft className="mr-1" /> Back
           </Link>
         }
       />
@@ -47,19 +47,19 @@ export default async function RoomPage({ params }: PageProps) {
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
-                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Ukuran</p>
+                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Size</p>
                 <p className="text-sm font-medium text-blue-800">{room.sqft ?? '-'} sq ft</p>
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
-                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Ketersediaan</p>
+                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Availability</p>
                 <p className="text-sm font-medium text-blue-800">{room.availability || '-'}</p>
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
-                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Harga / Jam</p>
+                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Price / Hour</p>
                 <p className="text-sm font-bold text-blue-700">{formatIDR(room.price_per_hour)}</p>
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
-                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Alamat</p>
+                <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Address</p>
                 <p className="text-sm font-medium text-blue-800 break-words">{room.address || '-'}</p>
               </div>
             </div>
@@ -67,8 +67,8 @@ export default async function RoomPage({ params }: PageProps) {
           <div className="lg:col-span-5">
             <div className="sticky top-6">
               <div className="mb-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-lg px-5 py-4 shadow">
-                <p className="text-xs uppercase tracking-wide font-semibold">Mulai dari</p>
-                <p className="text-2xl font-extrabold mt-1">{formatIDR(room.price_per_hour)}/jam</p>
+                <p className="text-xs uppercase tracking-wide font-semibold">Starting from</p>
+                <p className="text-2xl font-extrabold mt-1">{formatIDR(room.price_per_hour)}/hour</p>
               </div>
               <BookingForm room={room} />
             </div>

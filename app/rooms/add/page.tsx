@@ -31,11 +31,11 @@ const AddRoomPage = () => {
   return (
     <>
       <Heading
-        title="Add a Room"
-        subtitle="Lengkapi detail untuk menambahkan ruang baru"
+  title="Add a Room"
+  subtitle="Fill in the details to create a new room"
         rightSlot={
           <Link href="/" className="inline-flex items-center text-sm font-medium text-blue-600 hover:underline">
-            <FaChevronLeft className="mr-1" /> Kembali
+            <FaChevronLeft className="mr-1" /> Back
           </Link>
         }
       />

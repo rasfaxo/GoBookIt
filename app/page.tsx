@@ -15,13 +15,13 @@ export default async function Home() {
 
   return (
     <>
-      <Heading title="Available Rooms" subtitle="Temukan dan pesan ruang meeting yang sesuai kebutuhan Anda" />
+  <Heading title="Available Rooms" subtitle="Find and book the meeting space that fits your needs" />
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         {rooms.length > 0 ? (
           rooms.map((room) => <RoomCard key={room.$id} room={room} />)
         ) : (
           <div className="md:col-span-2 lg:col-span-3">
-            <EmptyState title="Belum ada ruang" message="Belum ada ruang tersedia sekarang. Coba lagi nanti atau tambahkan ruang baru jika Anda pemilik." />
+            <EmptyState title="No rooms yet" message="No rooms are available right now. Try again later or add a new room if you're an owner." />
           </div>
         )}
       </div>
