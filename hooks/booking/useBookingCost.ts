@@ -1,6 +1,11 @@
 import { useEffect, useState } from 'react';
 
-export interface BookingDates { inDate: string; inTime: string; outDate: string; outTime: string; }
+export interface BookingDates {
+  inDate: string;
+  inTime: string;
+  outDate: string;
+  outTime: string;
+}
 
 export function useBookingCost(dates: BookingDates) {
   const [hours, setHours] = useState<number | null>(null);

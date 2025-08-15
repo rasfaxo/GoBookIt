@@ -13,9 +13,9 @@ export default async function getSingleRoom(roomId: string): Promise<ApiResult<R
       process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS!,
       roomId
     );
-  return { ok: true, data: asRoomDoc(room) as RoomDoc };
+    return { ok: true, data: asRoomDoc(room) as RoomDoc };
   } catch (error) {
     console.log('Failed to get room', error);
-  return { ok: false, error: 'Failed to load room' };
+    return { ok: false, error: 'Failed to load room' };
   }
 }

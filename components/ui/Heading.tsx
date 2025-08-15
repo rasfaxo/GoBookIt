@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface HeadingProps {
   title: string;
   subtitle?: string;
@@ -22,5 +24,4 @@ const Heading = ({ title, subtitle, rightSlot }: HeadingProps) => {
     </header>
   );
 };
-
-export default Heading;
+export default memo(Heading);

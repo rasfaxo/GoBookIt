@@ -30,10 +30,10 @@ export const STRINGS = {
     availabilityError: 'Could not verify availability right now',
     dateRangeInvalid: 'End time must be after start time',
     loginRequiredShort: 'Login required to book',
-  cancelConfirm: 'Are you sure you want to cancel this booking?',
-  cancelSuccess: 'Booking cancelled successfully!',
-  cancelError: 'Failed to cancel booking',
-  bookSuccess: 'Room has been booked!',
+    cancelConfirm: 'Are you sure you want to cancel this booking?',
+    cancelSuccess: 'Booking cancelled successfully!',
+    cancelError: 'Failed to cancel booking',
+    bookSuccess: 'Room has been booked!',
   },
   rooms: {
     availableRooms: 'Available Rooms',
@@ -49,9 +49,9 @@ export const STRINGS = {
     bookRoom: 'Book Room',
     estimatedCost: 'Estimated Cost',
     startingFrom: 'Starting from',
-  deleteConfirm: 'Are you sure you want to delete this room?',
-  deleteSuccess: 'Room deleted successfully!',
-  deleteError: 'Failed to delete room',
+    deleteConfirm: 'Are you sure you want to delete this room?',
+    deleteSuccess: 'Room deleted successfully!',
+    deleteError: 'Failed to delete room',
   },
 };
 export type StringKeys = typeof STRINGS;
