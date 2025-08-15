@@ -6,7 +6,8 @@ import { toast } from 'react-toastify';
 import { FaChevronLeft, FaSave, FaUpload } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { Heading, Card } from '@/components';
+import { Heading, Card, Input, Button } from '@/components';
+import { STRINGS } from '@/constants/strings';
 import createRoom, { type CreateRoomState } from '@/services/rooms/createRoom';
 
 const MAX_IMAGE_BYTES = 4.5 * 1024 * 1024; // 4.5MB
@@ -30,9 +31,9 @@ const AddRoomPage = () => {
 
   return (
     <>
-      <Heading
-  title="Add a Room"
-  subtitle="Fill in the details to create a new room"
+    <Heading
+  title={STRINGS.rooms.addRoom}
+  subtitle={STRINGS.rooms.addRoomSubtitle}
         rightSlot={
           <Link href="/" className="inline-flex items-center text-sm font-medium text-blue-600 hover:underline">
             <FaChevronLeft className="mr-1" /> Back
@@ -57,95 +58,14 @@ const AddRoomPage = () => {
           <div className="grid gap-8 lg:grid-cols-12">
             <div className="lg:col-span-7 space-y-6">
               <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-1">
-                  <label htmlFor="name" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Room Name
-                  </label>
-                  <input id="name" name="name" required placeholder="Large Conference Room" className={inputBase} />
-                </div>
-                <div className="space-y-1">
-                  <label htmlFor="price_per_hour" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Price / Hour
-                  </label>
-                  <input
-                    id="price_per_hour"
-                    name="price_per_hour"
-                    type="number"
-                    min={0}
-                    step={1}
-                    required
-                    placeholder="150"
-                    className={inputBase}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label htmlFor="sqft" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Square Feet
-                  </label>
-                  <input id="sqft" name="sqft" type="number" min={0} required placeholder="450" className={inputBase} />
-                </div>
-                <div className="space-y-1">
-                  <label htmlFor="capacity" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Capacity
-                  </label>
-                  <input
-                    id="capacity"
-                    name="capacity"
-                    type="number"
-                    min={1}
-                    required
-                    placeholder="12"
-                    className={inputBase}
-                  />
-                </div>
-                <div className="space-y-1 sm:col-span-2">
-                  <label htmlFor="availability" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Availability
-                  </label>
-                  <input
-                    id="availability"
-                    name="availability"
-                    required
-                    placeholder="Mon - Fri, 9am - 6pm"
-                    className={inputBase}
-                  />
-                </div>
-                <div className="space-y-1 sm:col-span-2">
-                  <label htmlFor="amenities" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Amenities (CSV)
-                  </label>
-                  <input
-                    id="amenities"
-                    name="amenities"
-                    required
-                    placeholder="projector, whiteboard, coffee"
-                    className={inputBase}
-                  />
-                </div>
-                <div className="space-y-1 sm:col-span-2">
-                  <label htmlFor="location" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Location
-                  </label>
-                  <input
-                    id="location"
-                    name="location"
-                    required
-                    placeholder="Building A, 3rd Floor"
-                    className={inputBase}
-                  />
-                </div>
-                <div className="space-y-1 sm:col-span-2">
-                  <label htmlFor="address" className="text-xs font-semibold uppercase tracking-wide text-blue-600">
-                    Address
-                  </label>
-                  <input
-                    id="address"
-                    name="address"
-                    required
-                    placeholder="Full street address"
-                    className={inputBase}
-                  />
-                </div>
+                <Input label="Room Name" id="name" name="name" required placeholder="Large Conference Room" />
+                <Input label="Price / Hour" id="price_per_hour" name="price_per_hour" type="number" min={0} step={1} required placeholder="150" />
+                <Input label="Square Feet" id="sqft" name="sqft" type="number" min={0} required placeholder="450" />
+                <Input label="Capacity" id="capacity" name="capacity" type="number" min={1} required placeholder="12" />
+                <Input label="Availability" id="availability" name="availability" required placeholder="Mon - Fri, 9am - 6pm" className="sm:col-span-2" />
+                <Input label="Amenities (CSV)" id="amenities" name="amenities" required placeholder="projector, whiteboard, coffee" className="sm:col-span-2" />
+                <Input label="Location" id="location" name="location" required placeholder="Building A, 3rd Floor" className="sm:col-span-2" />
+                <Input label="Address" id="address" name="address" required placeholder="Full street address" className="sm:col-span-2" />
               </div>
 
               <div className="space-y-1">
