@@ -6,15 +6,15 @@ import { Query } from 'node-appwrite';
 
 import { createSessionClient } from '@/lib/appwrite';
 
-function toUTCDateTime(dateString: string) {
+function toUTCDateTime(dateString: string): DateTime {
   return DateTime.fromISO(dateString, { zone: 'utc' }).toUTC();
 }
 
 function dateRangesOverlap(
-  aStart: InstanceType<typeof DateTime>,
-  aEnd: InstanceType<typeof DateTime>,
-  bStart: InstanceType<typeof DateTime>,
-  bEnd: InstanceType<typeof DateTime>
+  aStart: DateTime,
+  aEnd: DateTime,
+  bStart: DateTime,
+  bEnd: DateTime
 ) {
   return aStart < bEnd && aEnd > bStart;
 }

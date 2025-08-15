@@ -1,14 +1,9 @@
 'use server';
 import { cookies } from 'next/headers';
 
-import type { AuthUser } from '@/types/auth';
+import type { AuthUser, CheckAuthResult } from '@/types/auth';
 
 import { createSessionClient } from '@/lib/appwrite';
-
-interface CheckAuthResult {
-  isAuthenticated: boolean;
-  user?: AuthUser;
-}
 
 async function checkAuth(): Promise<CheckAuthResult> {
   const sessionCookie = (await cookies()).get('appwrite-session');
@@ -34,4 +29,3 @@ async function checkAuth(): Promise<CheckAuthResult> {
 }
 
 export default checkAuth;
-export type { CheckAuthResult };

@@ -19,7 +19,7 @@
     "paths": {
       "@/*": ["./*"]
     },
-    "types": ["jest", "node"],
+    "types": ["jest", "node", "luxon"],
     "plugins": [
       {
         "name": "next"

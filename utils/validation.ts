@@ -34,9 +34,15 @@ function extractOptionalNumber(value: any): number | undefined {
 
 // --- Booking Document Helpers ---
 function createBookingDoc(raw: any) {
+  // Handle room_id being either a string ID or an expanded object with $id
+  const roomId =
+    typeof raw.room_id === 'object' && raw.room_id && raw.room_id.$id
+      ? String(raw.room_id.$id)
+      : String(raw.room_id || '');
+
   return {
     $id: String(raw.$id || ''),
-    room_id: String(raw.room_id || ''),
+    room_id: roomId,
     user_id: String(raw.user_id || ''),
     check_in: String(raw.check_in || ''),
     check_out: String(raw.check_out || ''),

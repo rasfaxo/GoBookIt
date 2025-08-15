@@ -8,3 +8,8 @@ export interface AuthState {
   isAuthenticated: boolean;
   currentUser: AuthUser | null;
 }
+
+export interface CheckAuthResult {
+  isAuthenticated: boolean;
+  user?: AuthUser;
+}
