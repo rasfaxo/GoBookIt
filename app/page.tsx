@@ -1,5 +1,6 @@
 import { RoomCard, Heading, EmptyState } from '@/components';
 import getAllRooms from '@/services/rooms/getAllRooms';
+import { unwrap } from '@/services/apiClient';
 
 interface RoomDoc {
   $id: string;
@@ -11,7 +12,8 @@ interface RoomDoc {
 }
 
 export default async function Home() {
-  const rooms = (await getAllRooms()) as RoomDoc[];
+  const roomsResult = await getAllRooms();
+  const rooms = roomsResult.ok ? (roomsResult.data as RoomDoc[]) : [];
 
   return (
     <>

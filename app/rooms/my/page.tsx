@@ -7,7 +7,8 @@ interface RoomDoc {
 }
 
 const MyRoomsPage = async () => {
-  const rooms = (await getMyRooms()) as RoomDoc[];
+  const roomsResult = await getMyRooms();
+  const rooms = roomsResult.ok ? (roomsResult.data as RoomDoc[]) : [];
 
   return (
     <>

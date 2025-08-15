@@ -1,18 +1,19 @@
 'use server';
 import type { RoomDoc } from '@/types/rooms';
+import { type ApiResult } from '../apiClient';
 
 import { createAdminClient } from '@/lib/appwrite';
 // no redirect here; handled by error boundary
 import { asRoomDoc } from '@/utils/validation';
 
-export default async function getAllRooms(): Promise<RoomDoc[]> {
+export default async function getAllRooms(): Promise<ApiResult<RoomDoc[]>> {
   try {
     const { databases } = await createAdminClient();
     const { documents: rooms } = await databases.listDocuments(
       process.env.NEXT_PUBLIC_APPWRITE_DATABASE!,
       process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS!
     );
-    return rooms
+    const mapped = rooms
       .map((r) => {
         try {
           return asRoomDoc(r) as RoomDoc;
@@ -21,8 +22,9 @@ export default async function getAllRooms(): Promise<RoomDoc[]> {
         }
       })
       .filter(Boolean) as RoomDoc[];
+    return { ok: true, data: mapped };
   } catch (error) {
     console.log('Failed to get rooms', error);
-    throw new Error('Failed to load rooms');
+    return { ok: false, error: 'Failed to load rooms' };
   }
 }

@@ -4,7 +4,8 @@ import { Heading, BookedRoomCard, EmptyState } from '@/components';
 import getMyBookings from '@/services/bookings/getMyBookings';
 
 const BookingsPage = async () => {
-  const bookings = (await getMyBookings()) as BookingDoc[]; // may contain expanded room objects
+  const bookingsResult = await getMyBookings();
+  const bookings = bookingsResult.ok ? (bookingsResult.data as BookingDoc[]) : [];
 
   return (
     <>

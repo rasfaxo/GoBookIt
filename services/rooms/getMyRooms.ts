@@ -6,9 +6,10 @@ import { Query } from 'node-appwrite';
 import type { RoomDoc } from '@/types/rooms';
 
 import { createSessionClient } from '@/lib/appwrite';
+import { type ApiResult } from '../apiClient';
 import { asRoomDoc } from '@/utils/validation';
 
-export default async function getMyRooms(): Promise<RoomDoc[]> {
+export default async function getMyRooms(): Promise<ApiResult<RoomDoc[]>> {
   const sessionCookie = (await cookies()).get('appwrite-session');
   if (!sessionCookie) redirect('/login');
   try {
@@ -19,7 +20,7 @@ export default async function getMyRooms(): Promise<RoomDoc[]> {
       process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS!,
       [Query.equal('user_id', user.$id)]
     );
-    return rooms
+    const mapped = rooms
       .map((r) => {
         try {
           return asRoomDoc(r) as RoomDoc;
@@ -28,8 +29,9 @@ export default async function getMyRooms(): Promise<RoomDoc[]> {
         }
       })
       .filter(Boolean) as RoomDoc[];
+    return { ok: true, data: mapped };
   } catch (error) {
     console.log('Failed to get user rooms', error);
-    throw new Error('Failed to load user rooms');
+    return { ok: false, error: 'Failed to load user rooms' };
   }
 }

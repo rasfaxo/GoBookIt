@@ -14,7 +14,11 @@ interface PageProps {
 
 export default async function RoomPage(props: PageProps) {
   const params = await props.params; 
-  const room: RoomDoc = await getSingleRoom(params.id);
+  const roomResult = await getSingleRoom(params.id);
+  if (!roomResult.ok || !roomResult.data) {
+    throw new Error(roomResult.error || 'Room not found');
+  }
+  const room: RoomDoc = roomResult.data as RoomDoc;
   const imageSrc =
     buildAppwriteImageUrl({ fileId: room.image }) || getFallbackImage();
   const unoptimized = shouldBypassNextImageOptimization();
