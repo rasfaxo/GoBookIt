@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FaUser, FaSignInAlt, FaSignOutAlt, FaBuilding } from 'react-icons/fa';
+import { ThemeToggle } from '@/components';
 import { toast } from 'react-toastify';
 
 import { useAuth } from '@/lib/context/authContext';
@@ -53,7 +54,7 @@ const Header = (): JSX.Element => {
             </>
           )}
         </div>
-        <div className="ml-auto flex items-center gap-3">
+  <div className="ml-auto flex items-center gap-3">
           {!isAuthenticated && (
             <>
               <Link
@@ -86,6 +87,7 @@ const Header = (): JSX.Element => {
               </button>
             </>
           )}
+          <ThemeToggle />
         </div>
       </nav>
     </header>

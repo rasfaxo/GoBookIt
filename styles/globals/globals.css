@@ -1,3 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--color-bg: 255 255 255;
+	--color-fg: 17 24 39;
+	--color-bg-soft: 249 250 251;
+	--color-border: 219 234 254;
+}
+.dark {
+	--color-bg: 17 24 39;
+	--color-fg: 241 245 249;
+	--color-bg-soft: 30 41 59;
+	--color-border: 51 65 85;
+}
+
+body {
+	@apply bg-[rgb(var(--color-bg))] text-[rgb(var(--color-fg))];
+	color-scheme: light dark;
+}
+
+.loader-circle {
+	width: 1rem;
+	height: 1rem;
+	border-radius: 9999px;
+	border: 2px solid rgb(59 130 246);
+	border-top-color: transparent;
+	animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
