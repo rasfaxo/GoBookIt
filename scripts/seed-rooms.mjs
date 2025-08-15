@@ -1,10 +1,10 @@
-// scripts/seed-rooms.mjs
-// Seed rooms from constants/data/rooms.json into Appwrite collection (development use)
 import fs from 'fs';
 import path from 'path';
-import { Client, Databases } from 'node-appwrite';
+import { Client, Databases, Storage, ID } from 'node-appwrite';
+import axios from 'axios'; 
+import FormData from 'form-data'; 
 
-// Load .env.local similar to check-appwrite.mjs
+
 const loadEnv = () => {
   try {
     let envPath = path.resolve(process.cwd(), '.env.local');
@@ -34,6 +34,7 @@ const loadEnv = () => {
 
 loadEnv();
 
+// Setup Appwrite client
 const endpoint = process.env.APPWRITE_ENDPOINT || process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
 const project = process.env.APPWRITE_PROJECT || process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
 const apiKey =
@@ -49,7 +50,9 @@ if (!endpoint || !project || !apiKey) {
 
 const client = new Client().setEndpoint(endpoint).setProject(project).setKey(apiKey);
 const databases = new Databases(client);
+const storage = new Storage(client);
 
+// Load rooms data
 const dataPath = path.resolve(process.cwd(), 'constants', 'data', 'rooms.json');
 if (!fs.existsSync(dataPath)) {
   console.error('rooms.json not found at', dataPath);
@@ -65,17 +68,51 @@ try {
   process.exit(1);
 }
 
+// Function to upload image using direct HTTP request to Appwrite API
+// This avoids the Node.js compatibility issues with the Appwrite SDK
+async function uploadImageWithAxios(bucketId, filePath, fileName) {
+  try {
+    const fileBuffer = fs.readFileSync(filePath);
+    const fileSize = fs.statSync(filePath).size;
+
+    const formData = new FormData();
+    formData.append('fileId', ID.unique());
+    formData.append('file', fileBuffer, {
+      filename: fileName,
+      knownLength: fileSize,
+    });
+
+    const response = await axios.post(`${endpoint}/storage/buckets/${bucketId}/files`, formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'X-Appwrite-Project': project,
+        'X-Appwrite-Key': apiKey,
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error('Upload error:', error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Main function
 (async () => {
   const dbId = process.env.NEXT_PUBLIC_APPWRITE_DATABASE;
   const collectionId = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS;
-  if (!dbId || !collectionId) {
+  const bucketId = process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ROOMS;
+
+  if (!dbId || !collectionId || !bucketId) {
     console.error(
-      'Please set NEXT_PUBLIC_APPWRITE_DATABASE and NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS in .env.local'
+      'Please set NEXT_PUBLIC_APPWRITE_DATABASE, NEXT_PUBLIC_APPWRITE_COLLECTION_ROOMS, and NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ROOMS in .env.local'
     );
     process.exit(1);
   }
 
-  console.log(`Seeding ${rooms.length} rooms to ${dbId}/${collectionId}`);
+  console.log(
+    `Seeding ${rooms.length} rooms to ${dbId}/${collectionId} with images to bucket ${bucketId}`
+  );
 
   for (const r of rooms) {
     try {
@@ -88,6 +125,36 @@ try {
       };
       delete payload.$id;
 
+      // Upload local image to Appwrite Storage if available
+      if (r.image && bucketId) {
+        try {
+          const localImagePath = path.resolve(
+            process.cwd(),
+            'public',
+            'images',
+            'rooms',
+            String(r.image)
+          );
+
+          if (fs.existsSync(localImagePath)) {
+            console.log(`Uploading image ${r.image} from ${localImagePath}`);
+
+            // Use the custom upload function
+            const uploaded = await uploadImageWithAxios(bucketId, localImagePath, r.image);
+
+            if (uploaded && uploaded.$id) {
+              payload.image = uploaded.$id;
+              console.log('Successfully uploaded image:', r.image, '-> fileId:', uploaded.$id);
+            }
+          } else {
+            console.warn('Local image not found:', localImagePath);
+          }
+        } catch (imgErr) {
+          console.error('Image upload failed for', r.image, imgErr);
+        }
+      }
+
+      // Create or update document in the database
       if (docId) {
         try {
           await databases.createDocument(dbId, collectionId, docId, payload);
@@ -101,14 +168,14 @@ try {
           }
         }
       } else {
-        const res = await databases.createDocument(dbId, collectionId, undefined, payload);
-        console.log('Created document (new id)=', res.$id);
+        const res = await databases.createDocument(dbId, collectionId, ID.unique(), payload);
+        console.log('Created document with new ID:', res.$id);
       }
     } catch (err) {
       console.error('Failed seeding entry', r, err);
     }
   }
 
-  console.log('Seeding finished');
+  console.log('Seeding finished successfully');
   process.exit(0);
 })();
