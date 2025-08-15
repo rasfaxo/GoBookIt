@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useActionState } from 'react';
 import { toast } from 'react-toastify';
 
@@ -29,6 +29,14 @@ const BookingForm = ({ room }: BookingFormProps) => {
   const [dates, setDates] = useState({ inDate: '', inTime: '', outDate: '', outTime: '' });
 
   useEffect(() => {
+    if (state?.error) toast.error(state.error);
+    if (state?.success) {
+      toast.success('Room has been booked!');
+      router.push('/bookings');
+    }
+  }, [state, router]);
+
+  useEffect(() => {
     if (dates.inDate && dates.inTime && dates.outDate && dates.outTime) {
       const start = new Date(`${dates.inDate}T${dates.inTime}`);
       const end = new Date(`${dates.outDate}T${dates.outTime}`);
@@ -43,6 +51,10 @@ const BookingForm = ({ room }: BookingFormProps) => {
       setCalcHours(null);
     }
   }, [dates]);
+
+  const onFieldChange = useCallback((key: keyof typeof dates, value: string) => {
+    setDates((d) => ({ ...d, [key]: value }));
+  }, []);
   return (
     <div className="mt-6">
       <h2 className="text-lg font-semibold text-blue-800 dark:text-blue-100 mb-3">Book this Room</h2>
@@ -74,10 +86,10 @@ const BookingForm = ({ room }: BookingFormProps) => {
       >
         <input type="hidden" name="room_id" value={room.$id} />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <Input type="date" name="check_in_date" label="Check-In Date" required onChange={(e)=> setDates(d=>({...d,inDate:e.target.value}))} />
-          <Input type="time" name="check_in_time" label="Check-In Time" required onChange={(e)=> setDates(d=>({...d,inTime:e.target.value}))} />
-          <Input type="date" name="check_out_date" label="Check-Out Date" required onChange={(e)=> setDates(d=>({...d,outDate:e.target.value}))} />
-          <Input type="time" name="check_out_time" label="Check-Out Time" required onChange={(e)=> setDates(d=>({...d,outTime:e.target.value}))} />
+          <Input type="date" name="check_in_date" label="Check-In Date" required onChange={(e)=> onFieldChange('inDate', e.target.value)} />
+          <Input type="time" name="check_in_time" label="Check-In Time" required onChange={(e)=> onFieldChange('inTime', e.target.value)} />
+          <Input type="date" name="check_out_date" label="Check-Out Date" required onChange={(e)=> onFieldChange('outDate', e.target.value)} />
+          <Input type="time" name="check_out_time" label="Check-Out Time" required onChange={(e)=> onFieldChange('outTime', e.target.value)} />
         </div>
 
         <div className="rounded-md border border-blue-100 bg-white/70 dark:bg-blue-900/40 dark:border-blue-800 px-4 py-3 text-sm flex items-center justify-between">
