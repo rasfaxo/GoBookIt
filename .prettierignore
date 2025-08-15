@@ -1,0 +1,10 @@
+node_modules
+.next
+dist
+build
+.vscode
+public
+package-lock.json
+coverage
+.env
+.env.local
