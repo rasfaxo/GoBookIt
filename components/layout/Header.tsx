@@ -20,71 +20,19 @@ const Header = (): JSX.Element => {
     }
   };
   return (
-    <header className="bg-gray-100">
-      <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-gray-800 hover:text-gray-600">
-              GoBookIt
-            </Link>
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-4">
-                <Link
-                  href="/"
-                  className="rounded-md px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
-                >
-                  Rooms
-                </Link>
-                {isAuthenticated && (
-                  <>
-                    <Link
-                      href="/bookings"
-                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
-                    >
-                      Bookings
-                    </Link>
-                    <Link
-                      href="/rooms/add"
-                      className="rounded-md px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
-                    >
-                      Add Room
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="ml-auto">
-            <div className="ml-4 flex items-center md:ml-6">
-              {!isAuthenticated && (
-                <>
-                  <Link href="/login" className="mr-3 text-gray-800 hover:text-gray-600">
-                    <FaSignInAlt className="inline mr-1" /> Login
-                  </Link>
-                  <Link href="/register" className="mr-3 text-gray-800 hover:text-gray-600">
-                    <FaUser className="inline mr-1" /> Register
-                  </Link>
-                </>
-              )}
-              {isAuthenticated && (
-                <>
-                  <Link href="/rooms/my">
-                    <FaBuilding className="inline mr-1" /> My Rooms
-                  </Link>
-                  <button onClick={handleLogout} className="mx-3 text-gray-800 hover:text-gray-600">
-                    <FaSignOutAlt className="inline mr-1" /> Sign Out
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
-      <div className="md:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+    <header className="sticky top-0 z-40 w-full backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/80 border-b border-blue-100">
+      <nav className="mx-auto flex h-14 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="text-lg font-extrabold tracking-tight text-blue-700 hover:text-blue-800 flex items-center gap-2"
+        >
+          <span className="inline-block w-2 h-5 bg-gradient-to-b from-blue-500 to-blue-300 rounded" />
+          GoBookIt
+        </Link>
+        <div className="hidden md:flex items-center gap-1 text-sm font-medium text-blue-700">
           <Link
             href="/"
-            className="block rounded-md px-3 py-2 text-base font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
+            className="px-3 py-2 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             Rooms
           </Link>
@@ -92,20 +40,54 @@ const Header = (): JSX.Element => {
             <>
               <Link
                 href="/bookings"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
+                className="px-3 py-2 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 Bookings
               </Link>
               <Link
                 href="/rooms/add"
-                className="block rounded-md px-3 py-2 text-base font-medium text-gray-800 hover:bg-gray-700 hover:text-white"
+                className="px-3 py-2 rounded-md hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-400"
               >
                 Add Room
               </Link>
             </>
           )}
         </div>
-      </div>
+        <div className="ml-auto flex items-center gap-3">
+          {!isAuthenticated && (
+            <>
+              <Link
+                href="/login"
+                className="text-sm font-semibold text-blue-700 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50"
+              >
+                <FaSignInAlt className="mr-1 inline" /> Login
+              </Link>
+              <Link
+                href="/register"
+                className="text-sm font-semibold text-blue-700 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50"
+              >
+                <FaUser className="mr-1 inline" /> Register
+              </Link>
+            </>
+          )}
+          {isAuthenticated && (
+            <>
+              <Link
+                href="/rooms/my"
+                className="text-sm font-semibold text-blue-700 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50"
+              >
+                <FaBuilding className="mr-1 inline" /> My Rooms
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="text-sm font-semibold text-blue-700 hover:text-blue-800 px-3 py-2 rounded-md hover:bg-blue-50"
+              >
+                <FaSignOutAlt className="mr-1 inline" /> Sign Out
+              </button>
+            </>
+          )}
+        </div>
+      </nav>
     </header>
   );
 };

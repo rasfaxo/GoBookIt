@@ -4,6 +4,7 @@ import { FaChevronLeft } from 'react-icons/fa';
 
 import { Heading, BookingForm, Card } from '@/components';
 import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization } from '@/utils';
+import { formatIDR } from '@/utils/currency';
 import getSingleRoom from '@/services/rooms/getSingleRoom';
 import type { RoomDoc } from '@/types/rooms';
 
@@ -55,7 +56,7 @@ export default async function RoomPage({ params }: PageProps) {
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
                 <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Harga / Jam</p>
-                <p className="text-sm font-bold text-blue-700">${room.price_per_hour ?? 0}</p>
+                <p className="text-sm font-bold text-blue-700">{formatIDR(room.price_per_hour)}</p>
               </div>
               <div className="bg-white/70 border border-blue-100 rounded-lg px-4 py-3">
                 <p className="text-xs uppercase tracking-wide text-blue-500 font-semibold mb-1">Alamat</p>
@@ -67,7 +68,7 @@ export default async function RoomPage({ params }: PageProps) {
             <div className="sticky top-6">
               <div className="mb-4 bg-gradient-to-r from-blue-600 to-blue-400 text-white rounded-lg px-5 py-4 shadow">
                 <p className="text-xs uppercase tracking-wide font-semibold">Mulai dari</p>
-                <p className="text-2xl font-extrabold mt-1">${room.price_per_hour ?? 0}/jam</p>
+                <p className="text-2xl font-extrabold mt-1">{formatIDR(room.price_per_hour)}/jam</p>
               </div>
               <BookingForm room={room} />
             </div>

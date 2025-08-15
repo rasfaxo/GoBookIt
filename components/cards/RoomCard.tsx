@@ -1,10 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  buildAppwriteImageUrl,
-  getFallbackImage,
-  shouldBypassNextImageOptimization,
-} from '@/utils';
+import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization } from '@/utils';
+import { formatIDR } from '@/utils/currency';
+import { Button } from '@/components';
 
 interface RoomCardProps {
   room: {
@@ -14,50 +12,68 @@ interface RoomCardProps {
     availability?: string;
     price_per_hour?: number;
     image?: string | null;
+    description?: string;
   };
 }
 
 const RoomCard = ({ room }: RoomCardProps) => {
-  const bucketId = process.env.NEXT_PUBLIC_APPWRITE_STORAGE_BUCKET_ROOMS;
-  const projectId = process.env.NEXT_PUBLIC_APPWRITE_PROJECT;
-  const imageSrc =
-    buildAppwriteImageUrl({ bucketId, projectId, fileId: room.image }) || getFallbackImage();
+  const imageSrc = buildAppwriteImageUrl({ fileId: room.image }) || getFallbackImage();
   const unoptimized = shouldBypassNextImageOptimization();
+  const price = formatIDR(room.price_per_hour);
   return (
-    <div className="bg-white shadow rounded-lg p-4 mt-4 flex flex-col sm:flex-row justify-between items-start sm:items-center">
-      <div className="flex flex-col sm:flex-row sm:space-x-4">
+    <article className="group relative flex flex-col overflow-hidden rounded-xl border border-blue-100 bg-white/90 backdrop-blur-sm shadow-sm transition hover:shadow-md focus-within:ring-2 focus-within:ring-blue-400">
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-blue-50">
         <Image
           src={imageSrc}
           alt={room.name}
-          width={128}
-          height={128}
-          className="w-full sm:w-32 sm:h-32 mb-3 sm:mb-0 object-cover rounded-lg"
+          fill
+          sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-300 group-hover:scale-105"
           unoptimized={unoptimized}
-          priority
+          loading="lazy"
         />
-        <div className="space-y-1">
-          <h4 className="text-lg font-semibold">{room.name}</h4>
-          <p className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-800"> Address:</span> {room.address}
-          </p>
-          <p className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-800">Availability:</span>
-            {room.availability}
-          </p>
-          <p className="text-sm text-gray-600">
-            <span className="font-semibold text-gray-800"> Price:</span>${room.price_per_hour}/hour
-          </p>
+        <div className="absolute top-2 left-2 rounded-md bg-white/80 px-2 py-1 text-[11px] font-medium text-blue-700 shadow">
+          {price}/jam
         </div>
       </div>
-      <div className="flex flex-col sm:flex-row w-full sm:w-auto sm:space-x-2 mt-2 sm:mt-0">
-        <Link
-          href={`/rooms/${room.$id}`}
-          className="bg-blue-500 text-white px-4 py-2 rounded mb-2 sm:mb-0 w-full sm:w-auto text-center hover:bg-blue-700"
-        >
-          View Room
-        </Link>
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="mb-1 line-clamp-1 text-base font-semibold tracking-tight text-blue-800" title={room.name}>
+          {room.name}
+        </h3>
+        {room.description && (
+          <p
+            className="mb-2 line-clamp-2 text-xs text-blue-600/90"
+            title={room.description}
+          >
+            {room.description}
+          </p>
+        )}
+        <div className="mt-auto space-y-1.5">
+          {room.address && (
+            <p className="truncate text-[11px] font-medium text-blue-700/80" title={room.address}>
+              {room.address}
+            </p>
+          )}
+          {room.availability && (
+            <p className="truncate text-[11px] text-blue-500" title={room.availability}>
+              {room.availability}
+            </p>
+          )}
+          <div className="pt-2">
+            <Button
+              asChild
+              size="sm"
+              variant="primary"
+              className="w-full font-medium"
+            >
+              <Link href={`/rooms/${room.$id}`} aria-label={`View details for ${room.name}`}>
+                Lihat Detail
+              </Link>
+            </Button>
+          </div>
+        </div>
       </div>
-    </div>
+    </article>
   );
 };
 export default RoomCard;
