@@ -44,7 +44,7 @@ const RegisterPage = () => {
             const pwd = formData.get('password') as string;
             const cpwd = formData.get('confirm-password') as string;
             if (pwd !== cpwd) {
-              setClientError('Password tidak sama');
+              setClientError('Passwords do not match');
               return;
             }
             setClientError(null);

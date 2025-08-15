@@ -9,3 +9,4 @@ export { default as Modal } from './Modal';
 export { default as Skeleton } from './Skeleton';
 export { ThemeProvider } from './ThemeProvider';
 export { default as ThemeToggle } from './ThemeToggle';
+export { default as Input } from './Input';
