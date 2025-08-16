@@ -67,12 +67,12 @@ export const createSessionClient = (token?: string) => {
   if (!endpoint || !project) throw new Error('Missing Appwrite env configuration');
   const client = new Client().setEndpoint(endpoint).setProject(project);
   if (token) {
-  try {
+    try {
       // Safe debug log: show token length and whether it looks like a JWT (has two dots)
       const len = token.length;
       const dotCount = (token.match(/\./g) || []).length;
       console.log(`createSessionClient: received token length=${len}, dotCount=${dotCount}`);
-  } catch {
+    } catch {
       // ignore logging errors
     }
     client.setJWT(token);

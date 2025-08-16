@@ -2,7 +2,7 @@ name: Preview Deploy (Vercel)
 
 on:
   pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
