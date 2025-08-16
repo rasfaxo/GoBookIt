@@ -22,6 +22,6 @@ import Header from '@/components/layout/Header';
 describe('Header', () => {
   it('renders brand name', () => {
     render(<Header />);
-    expect(screen.getByText(/GoBookIt/i)).toBeInTheDocument();
+  expect(screen.getByAltText(/GoBookIt/i)).toBeInTheDocument();
   });
 });

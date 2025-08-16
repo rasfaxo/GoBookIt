@@ -28,8 +28,11 @@ const Header = (): JSX.Element => {
           href="/"
           className="text-lg font-extrabold tracking-tight text-blue-700 hover:text-blue-800 flex items-center gap-2"
         >
-          <span className="inline-block w-2 h-5 bg-gradient-to-b from-blue-500 to-blue-300 rounded" />
-          GoBookIt
+          <img
+            src="/images/gobookit-logo.png"
+            alt="GoBookIt"
+            className="h-16 w-auto md:h-20 lg:h-24"
+          />
         </Link>
     <div className="hidden md:flex items-center gap-1 text-sm font-medium text-blue-700" role="menubar">
           <Link
