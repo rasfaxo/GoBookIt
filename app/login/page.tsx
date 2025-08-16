@@ -6,7 +6,7 @@ import { useActionState } from 'react';
 import { toast } from 'react-toastify';
 
 import { useAuth } from '@/lib/context/authContext';
-import { Input, Button, Card } from '@/components';
+import { Input, Button } from '@/components';
 import { STRINGS } from '@/constants/strings';
 import createSession from '@/services/auth/createSession';
 

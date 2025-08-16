@@ -1,6 +1,5 @@
 import { RoomCard, Heading, EmptyState } from '@/components';
 import getAllRooms from '@/services/rooms/getAllRooms';
-import { unwrap } from '@/services/apiClient';
 
 interface RoomDoc {
   $id: string;

@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { FaChevronLeft, FaSave, FaUpload } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { Heading, Card, Input, Button } from '@/components';
+import { Heading, Card, Input } from '@/components';
 import { STRINGS } from '@/constants/strings';
 import createRoom, { type CreateRoomState } from '@/services/rooms/createRoom';
 

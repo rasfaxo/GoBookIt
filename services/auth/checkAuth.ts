@@ -1,7 +1,7 @@
 'use server';
 import { cookies } from 'next/headers';
 
-import type { AuthUser, CheckAuthResult } from '@/types/auth';
+import type { CheckAuthResult } from '@/types/auth';
 
 import { createSessionClient } from '@/lib/appwrite';
 

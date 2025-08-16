@@ -13,7 +13,8 @@ const baseFieldStyles =
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ label, hint, error, id, className, required, wrapperClassName, ...rest }, ref) => {
-    const inputId = id || rest.name || React.useId();
+    const generatedId = React.useId();
+    const inputId = id || rest.name || generatedId;
     return (
       <div className={clsx('space-y-1', wrapperClassName)}>
         {label && (

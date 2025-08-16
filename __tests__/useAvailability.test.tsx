@@ -1,12 +1,13 @@
 import { renderHook, act } from '@testing-library/react';
 import { useAvailability } from '@/hooks/booking/useAvailability';
+import checkRoomAvailability from '@/services/rooms/checkRoomAvailability';
 
 jest.mock('@/services/rooms/checkRoomAvailability', () => ({
   __esModule: true,
   default: jest.fn(async () => true),
 }));
 
-const mockCheck = require('@/services/rooms/checkRoomAvailability').default as jest.Mock;
+const mockCheck = checkRoomAvailability as jest.Mock;
 
 function advance(ms: number) {
   jest.advanceTimersByTime(ms);

@@ -1,19 +1,15 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { FaChevronLeft } from 'react-icons/fa';
-import dynamic from 'next/dynamic';
 import { Heading, Card, BookingForm } from '@/components';
 import { buildAppwriteImageUrl, getFallbackImage, shouldBypassNextImageOptimization } from '@/utils';
 import { formatUSD } from '@/utils/currency';
 import getSingleRoom from '@/services/rooms/getSingleRoom';
 import type { RoomDoc } from '@/types/rooms';
 
-interface PageProps {
-  params: Promise<{ id: string }> | { id: string };
-}
-
-export default async function RoomPage(props: PageProps) {
-  const params = await props.params; 
+// Using loose typing to accommodate Next.js internal type expectations for params (can be a Promise)
+export default async function RoomPage(props: any) {
+  const params = await props.params;
   const roomResult = await getSingleRoom(params.id);
   if (!roomResult.ok || !roomResult.data) {
     throw new Error(roomResult.error || 'Room not found');

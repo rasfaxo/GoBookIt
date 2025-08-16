@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 
 import bookRoom from '@/services/bookings/bookRoom';
 import { useAuth } from '@/hooks';
-import { Input, Button, Card, AvailabilityBanner } from '@/components';
+import { Input, Button, AvailabilityBanner } from '@/components';
 import { STRINGS } from '@/constants/strings';
 import { useAvailability, useBookingCost } from '@/hooks/booking';
 import AuthNotice from './AuthNotice';

@@ -7,7 +7,6 @@ jest.mock('next/navigation', () => ({
 
 // Polyfill TextEncoder/TextDecoder for libraries (Next.js / whatwg)
 import { TextEncoder, TextDecoder } from 'util';
-// @ts-ignore
+// @ts-expect-error assigning polyfill if missing
 if (!global.TextEncoder) global.TextEncoder = TextEncoder;
-// @ts-ignore
-if (!global.TextDecoder) global.TextDecoder = TextDecoder as any;
+if (!global.TextDecoder) global.TextDecoder = TextDecoder as unknown as typeof global.TextDecoder;
